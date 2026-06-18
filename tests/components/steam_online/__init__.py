@@ -11,17 +11,21 @@ from homeassistant.components.steam_online.const import (
     CONF_ACCOUNT,
     CONF_ACCOUNTS,
     DOMAIN,
+    STEAM_ID64_IDENTIFIER,
+    STEAM_MINIPROFILE_URL,
 )
 from homeassistant.const import CONF_API_KEY
 from homeassistant.core import HomeAssistant
 
 from tests.common import MockConfigEntry
+from tests.test_util.aiohttp import AiohttpClientMocker
 
 API_KEY = "abc123"
 ACCOUNT_1 = "12345678901234567"
 ACCOUNT_2 = "12345678912345678"
 ACCOUNT_NAME_1 = "testaccount1"
 ACCOUNT_NAME_2 = "testaccount2"
+RICH_PRESENCE = "On Ship"
 
 CONF_DATA = {
     CONF_API_KEY: API_KEY,
@@ -50,6 +54,21 @@ def create_entry(hass: HomeAssistant) -> MockConfigEntry:
     )
     entry.add_to_hass(hass)
     return entry
+
+
+def mock_miniprofile(
+    aioclient_mock: AiohttpClientMocker,
+    account: str = ACCOUNT_1,
+    rich_presence: str | None = RICH_PRESENCE,
+) -> None:
+    """Mock Steam miniprofile rich presence."""
+    miniprofile_id = int(account) - STEAM_ID64_IDENTIFIER
+    html = (
+        f'<span class="rich_presence">{rich_presence}</span>'
+        if rich_presence
+        else ""
+    )
+    aioclient_mock.get(f"{STEAM_MINIPROFILE_URL}{miniprofile_id}", text=html)
 
 
 class MockedUserInterfaceNull:

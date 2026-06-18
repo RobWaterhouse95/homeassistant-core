@@ -65,6 +65,8 @@ class SteamSensor(SteamEntity, SensorEntity):
         player = self.coordinator.data[self.entity_description.key]
 
         attrs: dict[str, str | int | datetime] = {}
+        if rich_presence := player.get("rich_presence"):
+            attrs["rich_presence"] = rich_presence
         if game := player.get("gameextrainfo"):
             attrs["game"] = game
         if game_id := player.get("gameid"):

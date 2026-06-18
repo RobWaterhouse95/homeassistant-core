@@ -37,3 +37,5 @@ STEAM_API_URL = "https://steamcdn-a.akamaihd.net/steam/apps/"
 STEAM_HEADER_IMAGE_FILE = "header.jpg"
 STEAM_MAIN_IMAGE_FILE = "capsule_616x353.jpg"
 STEAM_ICON_URL = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/"
+STEAM_ID64_IDENTIFIER = 76561197960265728
+STEAM_MINIPROFILE_URL = "https://steamcommunity.com/miniprofile/"

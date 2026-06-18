@@ -7,12 +7,17 @@ from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 
-from . import create_entry, patch_interface
+from tests.test_util.aiohttp import AiohttpClientMocker
+
+from . import create_entry, mock_miniprofile, patch_interface
 
 
-async def test_setup(hass: HomeAssistant) -> None:
+async def test_setup(
+    hass: HomeAssistant, aioclient_mock: AiohttpClientMocker
+) -> None:
     """Test unload."""
     entry = create_entry(hass)
+    mock_miniprofile(aioclient_mock)
     with patch_interface():
         await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
@@ -38,10 +43,13 @@ async def test_async_setup_entry_auth_failed(hass: HomeAssistant) -> None:
 
 
 async def test_device_info(
-    hass: HomeAssistant, device_registry: dr.DeviceRegistry
+    hass: HomeAssistant,
+    device_registry: dr.DeviceRegistry,
+    aioclient_mock: AiohttpClientMocker,
 ) -> None:
     """Test device info."""
     entry = create_entry(hass)
+    mock_miniprofile(aioclient_mock)
     with patch_interface():
         await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()

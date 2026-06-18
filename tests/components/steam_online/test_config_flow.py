@@ -11,6 +11,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers import entity_registry as er
 
+from tests.test_util.aiohttp import AiohttpClientMocker
+
 from . import (
     ACCOUNT_1,
     ACCOUNT_2,
@@ -19,6 +21,7 @@ from . import (
     CONF_OPTIONS,
     CONF_OPTIONS_2,
     create_entry,
+    mock_miniprofile,
     patch_interface,
     patch_interface_private,
     patch_user_interface_null,
@@ -131,9 +134,13 @@ async def test_flow_reauth(hass: HomeAssistant) -> None:
         assert entry.data == new_conf
 
 
-async def test_options_flow(hass: HomeAssistant) -> None:
+async def test_options_flow(
+    hass: HomeAssistant, aioclient_mock: AiohttpClientMocker
+) -> None:
     """Test updating options."""
     entry = create_entry(hass)
+    mock_miniprofile(aioclient_mock)
+    mock_miniprofile(aioclient_mock, ACCOUNT_2)
     with (
         patch_interface(),
         patch(
@@ -159,10 +166,13 @@ async def test_options_flow(hass: HomeAssistant) -> None:
 
 
 async def test_options_flow_deselect(
-    hass: HomeAssistant, entity_registry: er.EntityRegistry
+    hass: HomeAssistant,
+    entity_registry: er.EntityRegistry,
+    aioclient_mock: AiohttpClientMocker,
 ) -> None:
     """Test deselecting user."""
     entry = create_entry(hass)
+    mock_miniprofile(aioclient_mock)
     with (
         patch_interface(),
         patch(
